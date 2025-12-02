@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alamanese</title>
+
+<style>
+body {
+  background:#8a0000;
+  color:white;
+  font-family:Arial;
+  margin:0;
+  padding:0;
+  height:100vh;
+  overflow:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+}
+
+input, button, textarea {
+  font-family:inherit;
+}
+
+#lock {
+  text-align:center;
+}
+
+input {
+  padding:10px;
+  width:220px;
+  border-radius:6px;
+  border:2px solid #ff4d4d;
+  background:#330000;
+  color:white;
+}
+
+button {
+  padding:10px 20px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#ff4d4d;
+  color:white;
+  margin-top:10px;
+}
+
+#msg {
+  margin-top:10px;
+  height:20px;
+}
+
+/* Panels */
+.panel {
+  position: fixed;
+  top:0;
+  right: -100%;
+  width:100%;
+  height:100%;
+  background:#660000;
+  transition: right 0.6s ease;
+  padding:20px;
+  overflow-y:auto;
+  box-sizing:border-box;
+}
+
+textarea {
+  width:100%;
+  height:120px;
+  background:#330000;
+  border:2px solid #ff4d4d;
+  border-radius:6px;
+  color:white;
+  padding:10px;
+}
+
+/* Classified folders */
+.folder {
+  background:#222;
+  border:2px solid #555;
+  padding:12px;
+  border-radius:6px;
+  margin-top:15px;
+  cursor:pointer;
+  user-select:none;
+}
+
+.folder:hover {
+  background:#333;
+}
+
+/* Animated folder overlay */
+#folderOverlay {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  z-index: 900;
+}
+
+#animatedFolder {
+  position: fixed;
+  bottom: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 250px;
+  background: #ffeb3b;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-weight: bold;
+  font-size: 18px;
+  color: #000;
+  text-align: center;
+  transition: bottom 0.5s ease;
+  z-index: 1000;
+}
+
+#animatedFolderText {
+  padding: 10px;
+  overflow-y:auto;
+}
+
+#closeAnimatedFolder {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #ff4444;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
+/* File shape for content */
+.fileShape {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  min-height: 120px;
+  background: #ffeb3b;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  margin: 10px auto;
+}
+
+.fileShape::before {
+  content:"";
+  position:absolute;
+  top:0;
+  right:0;
+  width:60px;
+  height:30px;
+  background:#660000;
+  border-top-right-radius:6px;
+}
+
+.fileContent {
+  position: absolute;
+  top:20px;
+  left:10px;
+  right:10px;
+  bottom:10px;
+  background:#000;
+  border-radius:4px;
+  padding:10px;
+  overflow-y:auto;
+  color:#fff;
+}
+
+.fileContent input {
+  width:100%;
+  padding:8px;
+  border:none;
+  border-radius:4px;
+  background:#222;
+  color:white;
+  font-size:16px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="lock">
+  <h3>Enter password</h3>
+  <input id="pw" value="">
+  <br>
+  <button id="mainBtn">Enter</button>
+  <div id="msg"></div>
+</div>
+
+<!-- Translator Panel -->
+<div id="translator" class="panel">
+  <h2>Alamanese Translator</h2>
+  <textarea id="in" placeholder="Type English here..."></textarea>
+  <button id="transBtn">Translate →</button>
+  <textarea id="out" placeholder="Alamanese output..."></textarea>
+
+  <div style="margin-top:20px; text-align:center;">
+    <span id="translatorSecretText" style="cursor:pointer; text-decoration:underline;">open // null authorization</span>
+    <br>
+    <input id="translatorSecretPw" placeholder="Enter secret password">
+  </div>
+</div>
+
+<!-- Secret Panel -->
+<div id="secret" class="panel">
+  <h2>CLASSIFIED // LEVEL‑10 ACCESS</h2>
+
+  <div class="folder" onclick="toggleFolderAnimated('f1')">📁 Stolen Tech File</div>
+  <div id="f1" class="folder-content fileShape">
+    <div class="fileContent">
+      <p>During the perimeter breach, hostile entity “Jeff” successfully extracted the
+      P‑Checker V4 Tactical Sweep Unit, containing thermal tracking, micro‑pulse radar,
+      and stealth mapping systems. This theft prevented Operation Groundlight and gave the enemy strategic advantage.</p>
+    </div>
+  </div>
+
+  <div class="folder" onclick="toggleFolderAnimated('f2')">📁 Injury Report — Operative N9</div>
+  <div id="f2" class="folder-content fileShape">
+    <div class="fileContent">
+      <p>Operative N9 sustained non-recoverable trauma after a hostile heat-source decoy detonated. Severe thermal damage and permanent mobility loss occurred. N9 is reassigned to Command-Restricted Support.</p>
+    </div>
+  </div>
+
+  <div class="folder" onclick="toggleFolderAnimated('f3')">📁 IVA Identity File</div>
+  <div id="f3" class="folder-content fileShape">
+    <div class="fileContent">
+      <p>The identity of “IVA” remains unrevealed to lower-class members. Only higher-ups know that IVA’s true identity is Amodelak.</p>
+    </div>
+  </div>
+
+  <div class="folder" onclick="toggleFolderAnimated('f4')">📁 ALAMA Missions File</div>
+  <div id="f4" class="folder-content fileShape">
+    <div class="fileContent">
+      <p>ALAMA's main mission is active surveillance of “Jeff”. Recon elements operate globally with evidence tracing to Cuba. Militia and criminal divisions handle intelligence acquisition and threat neutralization.</p>
+    </div>
+  </div>
+
+  <div class="folder" onclick="toggleFolderAnimated('f5')">📁 Perimeter Breach — Incident Report</div>
+  <div id="f5" class="folder-content fileShape">
+    <div class="fileContent">
+      <p>Squadron 1 detected a hostile silhouette 200m from HQ via thermal camera. The target deployed heat decoys and escaped. Recon squads found no trace.</p>
+    </div>
+  </div>
+
+  <div class="folder">
+    <span id="ownerText" style="cursor:pointer; text-decoration:underline;">open // null authorization</span>
+  </div>
+  <div class="fileShape">
+    <div class="fileContent">
+      <input id="ownerPw" placeholder="Enter owner password">
+      <div id="ownerBox" style="display:none; margin-top:10px;">
+        <h3>OWNER ACCESS LOG</h3>
+        <p>Secondary authorization confirmed. Internal records accessible.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay and Animated Folder -->
+<div id="folderOverlay"></div>
+<div id="animatedFolder">
+  <button id="closeAnimatedFolder">X</button>
+  <div id="animatedFolderText"></div>
+</div>
+
+<script>
+/* PASSWORDS */
+const PASS_TRANSLATOR = "alama02";
+const PASS_SECRET = "uIet qtlpz cdodydpz 4";
+const PASS_OWNER = "MA02";
+
+/* Panels start hidden */
+document.getElementById('translator').style.right = "-100%";
+document.getElementById('secret').style.right = "-100%";
+
+/* MAIN PASSWORD BUTTON */
+document.getElementById('mainBtn').addEventListener('click', function(){
+  const pw = document.getElementById('pw').value.trim();
+  document.getElementById('translator').style.right = "-100%";
+  document.getElementById('secret').style.right = "-100%";
+  if(pw === PASS_TRANSLATOR){
+    document.getElementById('translator').style.right = "0";
+  } else if(pw === PASS_SECRET){
+    document.getElementById('secret').style.right = "0";
+  } else {
+    alert("Password incorrect");
+  }
+});
+
+/* Translator secret password from bottom text box */
+document.getElementById('translatorSecretText').addEventListener('click', ()=>{
+  const pw = document.getElementById('translatorSecretPw').value.trim();
+  if(pw === PASS_SECRET){
+    document.getElementById('secret').style.right = "0";
+  } else {
+    alert("Incorrect secret password.");
+  }
+});
+
+/* Owner log text click */
+document.getElementById('ownerText').addEventListener('click', ()=>{
+  const pw = document.getElementById('ownerPw').value.trim();
+  document.getElementById('ownerBox').style.display = "none";
+  if(pw === PASS_OWNER){
+    document.getElementById('ownerBox').style.display = "block";
+  } else {
+    alert("Incorrect owner password.");
+  }
+});
+
+/* TRANSLATOR CIPHER */
+const cipher = {
+  a:"j", b:"m", c:"l", d:"c", e:"t", f:"r", g:"c", h:"v",
+  i:"d", j:"f", k:"s", l:"a", m:"w", n:"z", o:"p", p:"e",
+  q:"g", r:"q", s:"y", t:"u", u:"n", v:"o", w:"k", x:"h",
+  y:"i", z:"bu"
+};
+
+document.getElementById('transBtn').addEventListener('click', function(){
+  const input = document.getElementById("in").value.toLowerCase();
+  let output = "";
+  for(const char of input){
+    if(cipher[char]) output += cipher[char];
+    else output += char;
+  }
+  document.getElementById("out").value = output;
+});
+
+/* ANIMATED FOLDER LOGIC */
+const animatedFolder = document.getElementById('animatedFolder');
+const animatedFolderText = document.getElementById('animatedFolderText');
+const closeFolderBtn = document.getElementById('closeAnimatedFolder');
+const folderOverlay = document.getElementById('folderOverlay');
+
+closeFolderBtn.addEventListener('click', () => {
+  animatedFolder.style.bottom = '-100%';
+  folderOverlay.style.display = 'none';
+});
+
+function toggleFolderAnimated(contentId){
+  const content = document.getElementById(contentId).innerHTML;
+  animatedFolderText.innerHTML = content;
+  animatedFolder.style.bottom = '50px';
+  folderOverlay.style.display = 'block';
+}
+</script>
+</body>
+</html>
